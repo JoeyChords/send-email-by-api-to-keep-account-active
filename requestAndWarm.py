@@ -22,7 +22,6 @@ while True:
     try:
         r = requests.get(COLD_URL)
         if r.status_code == 200:
-            alertMessageMailed = False
             logging.info(
                 timeOfRequest.strftime("%m/%d/%Y, %H:%M:%S")
                 + "   "
@@ -30,6 +29,30 @@ while True:
                 + " returned status code "
                 + str(r.status_code)
             )
+            # Send an email alert when the website is online.
+            if alertMessageMailed:
+                message = Mail(
+                    from_email=EMAIL_FROM,
+                    to_emails=EMAIL_TO,
+                    subject=COLD_URL + " is Online",
+                    html_content="<strong>"
+                    + COLD_URL
+                    + " is online.</strong><br><br><strong>Status code = "
+                    + str(r.status_code)
+                    + "</strong>",
+                )
+                try:
+                    sg = SendGridAPIClient(SENDGRID_API_KEY)
+                    response = sg.send(message)
+                    logging.info(
+                        "  Alert message sent with Sendgrid. Site back online."
+                    )
+                    logging.info("  Sendgrid status: " + str(response.status_code))
+                    logging.info(response.body)
+                    logging.info(response.headers)
+                    alertMessageMailed = False
+                except Exception as e:
+                    logging.info(e.message)
         else:
             raise Exception()
     except:
@@ -38,6 +61,7 @@ while True:
             + "   Status code "
             + str(r.status_code)
         )
+        # Send an email alert when something is wrong with the website.
         if not alertMessageMailed:
             message = Mail(
                 from_email=EMAIL_FROM,
@@ -52,7 +76,7 @@ while True:
             try:
                 sg = SendGridAPIClient(SENDGRID_API_KEY)
                 response = sg.send(message)
-                logging.info("  Alert message sent with Sendgrid.")
+                logging.info("  Alert message sent with Sendgrid. Site Error.")
                 logging.info("  Sendgrid status: " + str(response.status_code))
                 logging.info(response.body)
                 logging.info(response.headers)
