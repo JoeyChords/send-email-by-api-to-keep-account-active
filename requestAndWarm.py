@@ -17,6 +17,8 @@ logging.info(
 )
 alertMessageMailed = False
 
+print("Keeping " + COLD_URL + " warm")
+
 while True:
     timeOfRequest = datetime.datetime.now()
     try:
