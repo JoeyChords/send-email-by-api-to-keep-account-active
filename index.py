@@ -22,18 +22,18 @@ print(
 message = Mail(
     from_email=EMAIL_FROM,
     to_emails=EMAIL_TO,
-    subject="This Account is Active",
-    html_content="<strong>contact@headlinefights.com still has an active API key.</strong><br><br><strong>",
+    subject="Headline Fights Still Has Working Email",
+    html_content="<strong>The Headline Fights domain still has an active email API key.</strong><br><br><strong>",
 )
 
 while True:
-    timeOfRequest = datetime.datetime.now()
+    timeEmailSent = datetime.datetime.now()
 
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
         response = sg.send(message)
         logging.info(
-            timeStarted.strftime("%m/%d/%Y, %H:%M:%S")
+            timeEmailSent.strftime("%m/%d/%Y, %H:%M:%S")
             + "   Sent email from "
             + EMAIL_FROM
         )
