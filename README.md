@@ -1,6 +1,6 @@
 # SendEmailByApiToKeepAccountActive
 
-Sends a daily email using a seldom-used API key for the purpose of keeping a free Sendgrid account active.
+Sends a daily email using a seldom-used API key for the purpose of keeping a free Resend account active.
 
 ## Setup
 
