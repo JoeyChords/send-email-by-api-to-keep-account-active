@@ -1,12 +1,14 @@
 import datetime, logging, time
-from dotenv import dotenv_values
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from dotenv import load_dotenv
+import os
+import resend
 
-config = dotenv_values(".env")
-EMAIL_FROM = config["EMAIL_FROM"]
-EMAIL_TO = config["EMAIL_TO"]
-SENDGRID_API_KEY = config["SENDGRID_API_KEY"]
+load_dotenv()
+
+resend.api_key = os.environ["RESEND_API_KEY"]
+EMAIL_FROM = os.environ["EMAIL_FROM"]
+EMAIL_TO = os.environ["EMAIL_TO"]
+
 logging.basicConfig(filename="apiSender.log", level=logging.INFO)
 timeStarted = datetime.datetime.now()
 logging.info(
@@ -19,27 +21,24 @@ print(
     + timeStarted.strftime("%m/%d/%Y, %H:%M:%S")
 )
 
-message = Mail(
-    from_email=EMAIL_FROM,
-    to_emails=EMAIL_TO,
-    subject="Headline Fights Still Has Working Email",
-    html_content="<strong>The Headline Fights domain still has an active email API key.</strong><br><br><strong>",
-)
+params = {
+    "from": EMAIL_FROM,
+    "to": [EMAIL_TO],
+    "subject": "Headline Fights Still Has Working Email",
+    "html": "<strong>The Headline Fights domain still has an active email API key.</strong><br><br><strong>"
+}
 
 while True:
     timeEmailSent = datetime.datetime.now()
 
     try:
-        sg = SendGridAPIClient(SENDGRID_API_KEY)
-        response = sg.send(message)
+        response = resend.Emails.send(params)
         logging.info(
             timeEmailSent.strftime("%m/%d/%Y, %H:%M:%S")
             + "   Sent email from "
             + EMAIL_FROM
         )
-        logging.info("  Sendgrid status: " + str(response.status_code))
-        logging.info(response.body)
-        logging.info(response.headers)
+        logging.info("  Resend.com email: " + str(response))
     except Exception as e:
         logging.info(e.message)
     time.sleep(86400)
