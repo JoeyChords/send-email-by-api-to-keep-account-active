@@ -8,6 +8,7 @@ load_dotenv()
 resend.api_key = os.environ["RESEND_API_KEY"]
 EMAIL_FROM = os.environ["EMAIL_FROM"]
 EMAIL_TO = os.environ["EMAIL_TO"]
+DOMAIN = os.environ["DOMAIN"]
 
 logging.basicConfig(filename="apiSender.log", level=logging.INFO)
 timeStarted = datetime.datetime.now()
@@ -24,8 +25,8 @@ print(
 params = {
     "from": EMAIL_FROM,
     "to": [EMAIL_TO],
-    "subject": "Headline Fights Still Has Working Email",
-    "html": "<strong>The Headline Fights domain still has an active email API key.</strong><br><br><strong>"
+    "subject": f"{DOMAIN} Still Has Working Email",
+    "html": f"<strong>The {DOMAIN} domain still has an active email API key.</strong><br><br><strong>",
 }
 
 while True:
@@ -40,5 +41,5 @@ while True:
         )
         logging.info("  Resend.com email: " + str(response))
     except Exception as e:
-        logging.info(e.message)
+        logging.info(str(e))
     time.sleep(86400)
